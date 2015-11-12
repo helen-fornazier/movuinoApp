@@ -13,6 +13,7 @@
   <gap:plugin name="cordova-plugin-statusbar" source="npm" version="1.0.1"/>
   <gap:plugin name="cordova-plugin-whitelist" source="npm" version="1.0.0"/>
   <gap:plugin name="ionic-plugin-keyboard" source="npm" version="1.0.7"/>
+  <gap:plugin name="cordova-plugin-ble-central" source="npm" version="1.0.2"/>
   <content src="index.html"/>
   <access origin="*"/>
   <preference name="webviewbounce" value="false"/>
@@ -25,4 +26,5 @@
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
   </feature>
+  <allow-navigation href="*"/>
 </widget>
