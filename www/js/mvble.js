@@ -165,8 +165,14 @@ angular.module('mvble', [])
         }
     }
 
+    function clearRxLog()
+    {
+        $scope.rxLog = "";
+    }
+
     $scope.scan = scan;
     $scope.connect = connect;
     $scope.disconnect = disconnect;
     $scope.send = send;
+    $scope.clearRxLog = clearRxLog;
 })
