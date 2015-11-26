@@ -3,6 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <!-- Enable all requests, inline styles, and eval() -->
+    <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'">
     <title></title>
 
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
@@ -18,17 +20,58 @@
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
 
+    <!-- movuino bluetooth js -->
+    <script src="js/mvble.js"></script>
+
     <!-- your app's js -->
     <script src="js/app.js"></script>
   </head>
   <body ng-app="starter">
 
-    <ion-pane>
-      <ion-header-bar class="bar-stable">
-        <h1 class="title">Ionic Blank Starter</h1>
-      </ion-header-bar>
-      <ion-content>
-      </ion-content>
-    </ion-pane>
+    <div ng-controller="mvble-controller">
+        <ion-pane>
+          <ion-header-bar class="bar-stable">
+            <h1 class="title">Movuino</h1>
+          </ion-header-bar>
+          <ion-content>
+
+            <button ng-click="scan()" class="button">
+                Scan
+            </button>
+
+            <ul>
+                <!-- Example of object device:
+                 {"name":"ET Cable Replacement Demo","id":"00:07:80:7F:4D:0B","advertising":{},"rssi":-33} -->
+                <li ng-repeat="device in devices">
+                    {{device.name}}, {{device.id}}
+                    <button ng-click="connect({{device}})" class="button">
+                        Connect
+                    </button>
+                </li>
+            </ul>
+
+            connected to: {{connectedTo}}
+            </br>
+            detected device: {{mvDevice}}
+
+            <form>
+            <label class="item item-input">
+              <span class="input-label">Type command</span>
+              <input type="text" ng-model="inputCommand.text">
+            </label>
+            <button ng-click="send()" class="button">
+                SEND
+            </button>
+            </form>
+
+            </br>
+            Rx Log:
+            </br>
+            <pre>{{rxLog}}</pre>
+
+          </ion-content>
+        </ion-pane>
+
+    </div>
   </body>
 </html>
