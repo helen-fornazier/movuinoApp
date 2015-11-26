@@ -41,6 +41,19 @@ angular.module('mvble', [])
         return String.fromCharCode.apply(null, new Uint8Array(buffer));
     }
 
+    function disconnect()
+    {
+        console.log("BLE: disconnecting...");
+        ble.disconnect($scope.connectedTo.id,
+            function() {
+                console.log("BLE: disconnected");
+                $scope.connectedTo = false;
+                $scope.mvDevice = false;
+                $scope.$apply();
+            }
+        );
+    }
+
     function deviceFound(device)
     {
         console.log("BLE: device found");
@@ -79,13 +92,7 @@ angular.module('mvble', [])
         // If we tried all the mv_devices list and
         // we coudn't find any compatible service, disconnect
         console.log("BLE: connected device is not a Movuino. Disconnecting...");
-        ble.disconnect($scope.connectedTo.id,
-            function() {
-                $scope.connectedTo = false;
-                $scope.mvDevice = false;
-                $scope.$apply();
-            }
-        );
+        disconnect();
     }
 
     function listenNotifications()
@@ -156,5 +163,6 @@ angular.module('mvble', [])
 
     $scope.scan = scan;
     $scope.connect = connect;
+    $scope.disconnect = disconnect;
     $scope.send = send;
 })
