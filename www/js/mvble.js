@@ -4,14 +4,12 @@ angular.module('mvble', [])
     [
         {
             name            : "rbl",
-            detection_name  : "Movuino",
             uuid_service    : "713d0000-503e-4c75-ba94-3148f18d941e",
             uuid_tx         : "713d0003-503e-4c75-ba94-3148f18d941e",
             uuid_rx         : "713d0002-503e-4c75-ba94-3148f18d941e",
         },
         {
             name            : "v91",
-            detection_name  : "ET Cable Replacement Demo",
             uuid_service    : "0bd51666-e7cb-469b-8e4d-2742f1ba77cc",
             uuid_tx         : "e7add780-b042-4876-aae1-112855353cc1",
             uuid_rx         : "e7add780-b042-4876-aae1-112855353cc1",
@@ -78,13 +76,19 @@ angular.module('mvble', [])
 
     function detectConnectedDevice()
     {
-        for (var i in mv_devices) {
+        // Check for services in the connected device that matches our mv_devices list
+        for (var i in mv_devices)
+        {
             console.log("BLE: trying " + mv_devices[i].name);
 
-            if ($scope.connectedTo.name == mv_devices[i].detection_name) {
-                console.log("BLE: device detected - " + mv_devices[i].name);
-                $scope.mvDevice = mv_devices[i];
-                return;
+            for (var j in $scope.connectedTo.services)
+            {
+                if (mv_devices[i].uuid_service == $scope.connectedTo.services[j])
+                {
+                    console.log("BLE: device detected - " + mv_devices[i].name);
+                    $scope.mvDevice = mv_devices[i];
+                    return;
+                }
             }
         }
 
@@ -101,7 +105,7 @@ angular.module('mvble', [])
         ble.startNotification($scope.connectedTo.id, $scope.mvDevice.uuid_service, $scope.mvDevice.uuid_rx,
             function(buffer) {
                 var str = bytesToString(buffer);
-                console.log("BLE: rx:" + str);
+                console.log("BLE: rx>" + str);
                 // Printable html
                 // TODO: check this
                 str = str.replace(/(?:\r\n|\r|\n)/g, '\n');
@@ -133,7 +137,7 @@ angular.module('mvble', [])
     {
         console.log("BLE: connecting...");
         console.log(JSON.stringify(device));
-        ble.connect(device.id, function() {connected(device);},
+        ble.connect(device.id, connected,
             function(arg) {
                 console.log("BLE: Could not connect/Connection lost");
                 console.log(arg);
