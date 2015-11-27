@@ -1,5 +1,7 @@
 angular.module('mvble', [])
 
+.constant("rxBuff_max_size", 100) // Amound of elements the array can have
+
 .constant("mv_devices",
     [
         {
@@ -17,13 +19,14 @@ angular.module('mvble', [])
     ])
 
 // TODO: check if the use of $scope.$apply are correct
-.controller("mvble-controller", function($scope, mv_devices) {
+.controller("mvble-controller",
+function($scope, rxBuff_max_size, mv_devices) {
     // TODO: check if there is a better place to initialize the scope
     if (!$scope.devices) $scope.devices = [];
     if (!$scope.connectedTo) $scope.connectedTo = false;
     if (!$scope.mvDevice) $scope.mvDevice = false;
-    if (!$scope.rxLog) $scope.rxLog = "";
     if (!$scope.inputCommand) $scope.inputCommand = {};
+    if (!$scope.rxBuff) $scope.rxBuff = [];
 
     // ASCII only
     function stringToBytes(string) {
@@ -106,10 +109,12 @@ angular.module('mvble', [])
             function(buffer) {
                 var str = bytesToString(buffer);
                 console.log("BLE: rx>" + str);
-                // Printable html
-                // TODO: check this
-                str = str.replace(/(?:\r\n|\r|\n)/g, '\n');
-                $scope.rxLog = $scope.rxLog + str
+                $scope.rxBuff.push(str);
+                if ($scope.rxBuff.length == rxBuff_max_size)
+                {
+                    // Remove first line of it
+                    $scope.rxBuff.shift();
+                }
                 $scope.$apply();
             },
             function(arg) {
@@ -165,14 +170,14 @@ angular.module('mvble', [])
         }
     }
 
-    function clearRxLog()
+    function clearRxBuff()
     {
-        $scope.rxLog = "";
+        $scope.rxBuff = [];
     }
 
     $scope.scan = scan;
     $scope.connect = connect;
     $scope.disconnect = disconnect;
     $scope.send = send;
-    $scope.clearRxLog = clearRxLog;
+    $scope.clearRxBuff = clearRxBuff;
 })
