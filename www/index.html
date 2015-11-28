@@ -26,59 +26,58 @@
     <!-- your app's js -->
     <script src="js/app.js"></script>
   </head>
-  <body ng-app="starter">
+  <body ng-app="starter" ng-controller="mvble-controller">
 
-    <div ng-controller="mvble-controller">
-        <ion-pane>
-          <ion-header-bar class="bar-stable">
-            <h1 class="title">Movuino</h1>
-          </ion-header-bar>
-          <ion-content>
+    <ion-nav-view></ion-nav-view>
 
-            <button ng-click="scan()" class="button">
+    <script id='ble-disconnected.html' type='text/ng-template'>
+        <ion-view title="Scan">
+            <ion-content>
+
+            <button ng-click="scan()" class="button button-block button-positive">
                 Scan
             </button>
-            <button ng-click="disconnect()" class="button">
-                Disconnect
-            </button>
 
-            <ul>
-                <!-- Example of object device:
-                 {"name":"ET Cable Replacement Demo","id":"00:07:80:7F:4D:0B","advertising":{},"rssi":-33} -->
-                <li ng-repeat="device in devices">
-                    {{device.name}}, {{device.id}}
-                    <button ng-click="connect({{device}})" class="button">
+            <div class="list">
+                <div ng-repeat="device in devices" class="item item-button-right">
+                    {{device.name}} ({{device.id}}) rssi: {{device.rssi}}
+                    <button ng-click="connect({{device}})" class="button button-positive">
                         Connect
                     </button>
-                </li>
-            </ul>
+                </div>
+            </div>
 
-            connected to: {{connectedTo}}
-            </br>
-            detected device: {{mvDevice}}
+            </ion-content>
+        </ion-view>
+    </script>
 
-            <form>
-            <label class="item item-input">
-              <span class="input-label">Type command</span>
-              <input type="text" ng-model="inputCommand.text">
-            </label>
-            <button ng-click="send()" class="button">
-                SEND
-            </button>
-            </form>
+    <script id='ble-connected.html' type='text/ng-template'>
+        <ion-view title="Console">
 
-            <button ng-click="clearRxBuff()" class="button">
-                Clear Log
-            </button>
+            <div class="bar bar-header">
+                <div class="button-bar">
+                    <a ng-click="disconnect()" class="button button-positive">Disconnect</a>
+                    <a ng-click="clearRxBuff()" class="button button-positive">Clear</a>
+                </div>
+            </div>
 
-            </br>
-            Rx Log:
-            </br>
+            <ion-content class="has-header has-footer">
             <pre>{{rxBuff.join("")}}</pre>
+            </ion-content>
 
-          </ion-content>
-        </ion-pane>
+            <div class="bar bar-footer bar-positive item-input-inset footer-item-input-insert" >
+                <label class="item-input-wrapper">
+                    <input type="text" ng-model="inputCommand.text">
+                </label>
+                <button class="button button-small button-light" ng-click="send()">
+                    Send
+                </button>
+            </div>
 
-    </div>
+        </ion-view>
+    </script>
+
   </body>
+
 </html>
+

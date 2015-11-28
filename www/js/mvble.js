@@ -18,9 +18,10 @@ angular.module('mvble', [])
         },
     ])
 
-// TODO: check if the use of $scope.$apply are correct
+// TODO: check if we can remove $ionicScrollDelegate and $state
+// this module should be independed of the view
 .controller("mvble-controller",
-function($scope, rxBuff_max_size, mv_devices) {
+function($scope, $state, $ionicScrollDelegate, rxBuff_max_size, mv_devices) {
     // TODO: check if there is a better place to initialize the scope
     if (!$scope.devices) $scope.devices = [];
     if (!$scope.connectedTo) $scope.connectedTo = false;
@@ -49,6 +50,7 @@ function($scope, rxBuff_max_size, mv_devices) {
             function() {
                 console.log("BLE: disconnected");
                 $scope.connectedTo = false;
+                $state.go('ble-disconnected');
                 $scope.mvDevice = false;
                 $scope.$apply();
             }
@@ -115,6 +117,7 @@ function($scope, rxBuff_max_size, mv_devices) {
                     // Remove first line of it
                     $scope.rxBuff.shift();
                 }
+                $ionicScrollDelegate.scrollBottom();
                 $scope.$apply();
             },
             function(arg) {
@@ -128,6 +131,7 @@ function($scope, rxBuff_max_size, mv_devices) {
     {
         console.log("BLE: connected");
         $scope.connectedTo = device;
+        $state.go('ble-connected');
         // Detect version of the device
         detectConnectedDevice();
 
@@ -147,6 +151,7 @@ function($scope, rxBuff_max_size, mv_devices) {
                 console.log("BLE: Could not connect/Connection lost");
                 console.log(arg);
                 $scope.connectedTo = false;
+                $state.go('ble-disconnected');
                 $scope.mvDevice = false;
                 $scope.$apply();
             }
@@ -180,4 +185,71 @@ function($scope, rxBuff_max_size, mv_devices) {
     $scope.disconnect = disconnect;
     $scope.send = send;
     $scope.clearRxBuff = clearRxBuff;
+})
+
+// Controller used for testing the gui
+.controller("mvble-controller-gui-test",
+function($scope, $state, $ionicScrollDelegate, rxBuff_max_size, mv_devices) {
+    if (!$scope.devices) $scope.devices = [];
+    if (!$scope.connectedTo) $scope.connectedTo = false;
+    if (!$scope.mvDevice) $scope.mvDevice = false;
+    if (!$scope.inputCommand) $scope.inputCommand = {};
+    if (!$scope.rxBuff) $scope.rxBuff = [];
+
+    function scan()
+    {
+        $scope.devices = [
+            {"name":"ET Cable Replacement Demo",
+             "id":"00:07:80:7F:4D:0B",
+             "advertising":{},
+             "rssi":-36},
+            {"name":"Movuino",
+             "id":"FD:5D:4D:ED:2A:97",
+             "advertising":{},
+             "rssi":-64}
+        ];
+    }
+    function connect(device)
+    {
+        $scope.connectedTo = device;
+        $state.go('ble-connected');
+        $scope.mvDevice = mv_devices[0];
+
+    }
+    function disconnect()
+    {
+        $scope.connectedTo = false;
+        $state.go('ble-disconnected');
+        $scope.mvDevice = false;
+    }
+    function send()
+    {
+        $scope.count++;
+        $scope.rxBuff.push($scope.inputCommand.text + "\n");
+        $ionicScrollDelegate.scrollBottom();
+    }
+    function clearRxBuff()
+    {
+        $scope.rxBuff = [];
+    }
+
+    $scope.scan = scan;
+    $scope.connect = connect;
+    $scope.disconnect = disconnect;
+    $scope.send = send;
+    $scope.clearRxBuff = clearRxBuff;
+})
+
+.config(function($stateProvider, $urlRouterProvider) {
+    $urlRouterProvider.otherwise('/')
+
+    $stateProvider
+    .state('ble-disconnected', {
+        url: '/',
+        templateUrl: 'ble-disconnected.html'
+    })
+    .state('ble-connected', {
+        url: '/',
+        templateUrl: 'ble-connected.html'
+    })
 })
