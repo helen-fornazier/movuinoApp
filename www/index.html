@@ -40,7 +40,9 @@
 
             <div class="list">
                 <div ng-repeat="device in devices" class="item item-button-right">
-                    {{device.name}} ({{device.id}}) rssi: {{device.rssi}}
+                    <h2>{{device.name}}</h2>
+                    <p>Address: {{device.id}}</p>
+                    <p>Rssi: {{device.rssi}}</p>
                     <button ng-click="connect({{device}})" class="button button-positive">
                         Connect
                     </button>
@@ -65,6 +67,7 @@
             <pre>{{rxBuff.join("")}}</pre>
             </ion-content>
 
+            <form>
             <div class="bar bar-footer bar-positive item-input-inset footer-item-input-insert" >
                 <label class="item-input-wrapper">
                     <input type="text" ng-model="inputCommand.text">
@@ -73,6 +76,7 @@
                     Send
                 </button>
             </div>
+            </form>
 
         </ion-view>
     </script>

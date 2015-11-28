@@ -43,6 +43,11 @@ function($scope, $state, $ionicScrollDelegate, rxBuff_max_size, mv_devices) {
         return String.fromCharCode.apply(null, new Uint8Array(buffer));
     }
 
+    function clearRxBuff()
+    {
+        $scope.rxBuff = [];
+    }
+
     function disconnect()
     {
         console.log("BLE: disconnecting...");
@@ -52,6 +57,7 @@ function($scope, $state, $ionicScrollDelegate, rxBuff_max_size, mv_devices) {
                 $scope.connectedTo = false;
                 $state.go('ble-disconnected');
                 $scope.mvDevice = false;
+                clearRxBuff();
                 $scope.$apply();
             }
         );
@@ -130,6 +136,7 @@ function($scope, $state, $ionicScrollDelegate, rxBuff_max_size, mv_devices) {
     function connected(device)
     {
         console.log("BLE: connected");
+        $scope.devices = [];
         $scope.connectedTo = device;
         $state.go('ble-connected');
         // Detect version of the device
@@ -148,12 +155,10 @@ function($scope, $state, $ionicScrollDelegate, rxBuff_max_size, mv_devices) {
         console.log(JSON.stringify(device));
         ble.connect(device.id, connected,
             function(arg) {
+                // Make sure we are disconnected
                 console.log("BLE: Could not connect/Connection lost");
                 console.log(arg);
-                $scope.connectedTo = false;
-                $state.go('ble-disconnected');
-                $scope.mvDevice = false;
-                $scope.$apply();
+                disconnect();
             }
         );
     }
@@ -173,11 +178,6 @@ function($scope, $state, $ionicScrollDelegate, rxBuff_max_size, mv_devices) {
                 }
             );
         }
-    }
-
-    function clearRxBuff()
-    {
-        $scope.rxBuff = [];
     }
 
     $scope.scan = scan;
