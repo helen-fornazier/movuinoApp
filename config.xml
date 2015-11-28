@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <widget id="com.ionicframework.movuinoapp355285" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
-  <name>movuinoApp</name>
+  <name>Movuino Console</name>
   <description>
         An Ionic Framework and Cordova project.
     </description>
